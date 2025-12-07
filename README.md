@@ -1,36 +1,189 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛍️ Modern E-Commerce Platform
 
-## Getting Started
+A full-stack e-commerce application built with Next.js 16, React 19, Express.js, and MongoDB.
 
-First, run the development server:
+![Tech Stack](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-blue)
+![Express](https://img.shields.io/badge/Express-4.x-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Latest-brightgreen)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+- 🎨 Modern, responsive UI with dark mode support
+- 🛒 Full shopping cart functionality
+- 📦 Product catalog with categories and filtering
+- ⭐ Product ratings and reviews
+- 🔍 Search functionality
+- 💳 Checkout process
+- 📱 Mobile-first design
+- 🎭 Smooth animations with Framer Motion
+- 🌐 RESTful API backend
+- 💾 MongoDB database integration
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB (local or Atlas)
+- npm or yarn
+
+### Installation
+
+1. **Clone and Install**
+
+   ```bash
+   npm install
+   ```
+
+2. **Check Setup**
+
+   ```bash
+   ./check-setup.sh
+   ```
+
+3. **Install MongoDB** (if not installed)
+
+   ```bash
+   brew tap mongodb/brew
+   brew install mongodb-community@8.0
+   brew services start mongodb-community@8.0
+   ```
+
+4. **Seed Database**
+
+   ```bash
+   npm run seed
+   ```
+
+5. **Start Development**
+
+   ```bash
+   npm run dev
+   ```
+
+6. **Open Application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000
+
+📖 **For detailed setup instructions, see [QUICKSTART.md](./QUICKSTART.md)**
+
+## 🏗️ Tech Stack
+
+### Frontend
+
+- **Next.js 16** - React framework with App Router
+- **React 19** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animations
+- **Lucide React** - Icons
+
+### Backend
+
+- **Express.js** - Web framework
+- **MongoDB** - Database
+- **Mongoose** - ODM
+- **TypeScript** - Type safety
+- **CORS** - Cross-origin support
+
+## 📁 Project Structure
+
+```
+e-com/
+├── app/                    # Next.js frontend
+│   ├── components/         # React components
+│   ├── context/           # State management
+│   ├── lib/               # API utilities
+│   ├── types/             # TypeScript types
+│   └── [routes]/          # Page routes
+├── server/                 # Express backend
+│   ├── config/            # Configuration
+│   ├── controllers/       # Business logic
+│   ├── models/            # Database models
+│   ├── routes/            # API routes
+│   └── scripts/           # Utilities
+└── public/                # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔌 API Endpoints
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Products
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `GET /api/products` - Get all products
+- `GET /api/products?category=Electronics` - Filter by category
+- `GET /api/products?featured=true` - Get featured products
+- `GET /api/products?search=wireless` - Search products
+- `GET /api/products/:id` - Get single product
+- `POST /api/products` - Create product
+- `PUT /api/products/:id` - Update product
+- `DELETE /api/products/:id` - Delete product
 
-## Learn More
+### Health
 
-To learn more about Next.js, take a look at the following resources:
+- `GET /api/health` - Check server status
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Available Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev          # Start frontend + backend
+npm run dev:frontend # Start Next.js only
+npm run dev:backend  # Start Express only
+npm run build        # Build for production
+npm run start        # Start production server
+npm run seed         # Seed database with sample data
+npm run lint         # Run ESLint
+```
 
-## Deploy on Vercel
+## 🌍 Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create `.env` and `.env.local` files (see `.env.example`):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# .env (Backend)
+MONGODB_URI=mongodb://localhost:27017/ecommerce
+PORT=5000
+
+# .env.local (Frontend)
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+## 📸 Screenshots
+
+Visit the running application to see:
+
+- Home page with hero section
+- Shop with filtering and sorting
+- Product detail pages
+- Shopping cart
+- Checkout flow
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open source and available under the MIT License.
+
+## 🔗 Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Express.js Documentation](https://expressjs.com/)
+- [MongoDB Documentation](https://docs.mongodb.com/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+
+## 💡 Need Help?
+
+- Check [QUICKSTART.md](./QUICKSTART.md) for quick setup
+- See [SETUP.md](./SETUP.md) for detailed documentation
+- Run `./check-setup.sh` to diagnose issues
+
+---
+
+Built with ❤️ using Next.js, Express, and MongoDB

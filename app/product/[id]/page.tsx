@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,8 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import ProductCard from "../../components/ProductCard";
 import Button from "../../components/Button";
-import { products } from "../../data/products";
+import { getProductById, getProducts } from "../../lib/api";
+import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import {
   Star,
@@ -25,12 +26,53 @@ import {
 export default function ProductDetailPage() {
   const params = useParams();
   const { addToCart } = useCart();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const product = products.find((p) => p.id === params.id);
+  useEffect(() => {
+    async function fetchProduct() {
+      if (!params.id) return;
+
+      setLoading(true);
+      const response = await getProductById(params.id as string);
+
+      if (response.success && response.data) {
+        setProduct(response.data);
+
+        // Fetch related products
+        const relatedResponse = await getProducts({
+          category: response.data.category,
+        });
+        if (relatedResponse.success && relatedResponse.data) {
+          const related = relatedResponse.data
+            .filter((p: Product) => p.id !== response.data.id)
+            .slice(0, 4);
+          setRelatedProducts(related);
+        }
+      }
+      setLoading(false);
+    }
+    fetchProduct();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-950">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+          <p className="text-xl text-gray-600 dark:text-gray-400">
+            Loading product...
+          </p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -49,10 +91,10 @@ export default function ProductDetailPage() {
     );
   }
 
-  const productImages = product.images || [product.image];
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  const productImages =
+    product.images && product.images.length > 0
+      ? product.images
+      : [product.image];
 
   const handleAddToCart = () => {
     addToCart(product, quantity);

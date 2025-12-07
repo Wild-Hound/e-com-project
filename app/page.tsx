@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,7 +8,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProductCard from "./components/ProductCard";
 import Button from "./components/Button";
-import { products, categories } from "./data/products";
+import { categories } from "./data/products";
+import { getProducts } from "./lib/api";
+import { Product } from "./types/product";
 import {
   ArrowRight,
   TruckIcon,
@@ -17,7 +20,17 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
-  const featuredProducts = products.filter((p) => p.featured);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function fetchFeaturedProducts() {
+      const response = await getProducts({ featured: true });
+      if (response.success && response.data) {
+        setFeaturedProducts(response.data);
+      }
+    }
+    fetchFeaturedProducts();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">

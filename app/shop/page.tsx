@@ -1,20 +1,47 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
-import { products, categories } from "../data/products";
+import { categories } from "../data/products";
+import { getProducts } from "../lib/api";
+import { Product } from "../types/product";
 import { Filter, X } from "lucide-react";
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000]);
   const [showFilters, setShowFilters] = useState(false);
 
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      setError(null);
+      const response = await getProducts();
+      console.log("API Response:", response);
+      console.log("Response.data length:", response.data?.length);
+      console.log("Response.success:", response.success);
+      if (response.success && response.data) {
+        console.log("Setting products:", response.data);
+        setProducts(response.data);
+      } else {
+        console.log("Error or no data:", response.error);
+        setError(response.error || "Failed to load products");
+      }
+      setLoading(false);
+    }
+    fetchProducts();
+  }, []);
+
   const filteredAndSortedProducts = useMemo(() => {
+    console.log("Original products array:", products);
+    console.log("Products length:", products.length);
     let filtered = products;
 
     // Filter by category
@@ -23,11 +50,14 @@ export default function ShopPage() {
         (p) => p.category.toLowerCase() === selectedCategory.toLowerCase()
       );
     }
+    console.log("After category filter:", filtered.length);
 
     // Filter by price range
     filtered = filtered.filter(
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
     );
+    console.log("After price filter:", filtered.length);
+    console.log("Price range:", priceRange);
 
     // Sort products
     const sorted = [...filtered];
@@ -49,8 +79,9 @@ export default function ShopPage() {
         sorted.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
 
+    console.log("Final sorted products:", sorted.length);
     return sorted;
-  }, [selectedCategory, sortBy, priceRange]);
+  }, [products, selectedCategory, sortBy, priceRange]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -201,7 +232,25 @@ export default function ShopPage() {
             </div>
 
             {/* Products Grid */}
-            {filteredAndSortedProducts.length > 0 ? (
+            {loading ? (
+              <div className="text-center py-20">
+                <p className="text-xl text-gray-600 dark:text-gray-400">
+                  Loading products...
+                </p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-20">
+                <p className="text-xl text-red-600 dark:text-red-400 mb-4">
+                  Error loading products
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {error}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  Make sure the backend server is running on port 5001
+                </p>
+              </div>
+            ) : filteredAndSortedProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredAndSortedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
@@ -211,6 +260,14 @@ export default function ShopPage() {
               <div className="text-center py-20">
                 <p className="text-xl text-gray-600 dark:text-gray-400">
                   No products found matching your filters.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
+                  Debug: Total products loaded: {products.length}, Filtered:{" "}
+                  {filteredAndSortedProducts.length}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  Category: {selectedCategory}, Price range: ${priceRange[0]} -
+                  ${priceRange[1]}
                 </p>
               </div>
             )}
